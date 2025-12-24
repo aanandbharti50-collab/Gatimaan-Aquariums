@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Your Cart</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<h1 style="text-align:center;margin:40px">Your Cart</h1>
+
+<div id="cartItems" style="max-width:900px;margin:auto"></div>
+
+<h2 id="cartTotal" style="text-align:center;margin:30px"></h2>
+
+<div style="text-align:center">
+  <a href="shop.html" class="btn">Continue Shopping</a>
+  <a href="checkout.html" class="btn primary">Checkout</a>
+</div>
+
+<script src="js/products.js"></script>
+<script src="js/cart.js"></script>
+
+<script>
+const cartItemsDiv = document.getElementById("cartItems");
+const cart = getCart();
+
+let total = 0;
+
+cart.forEach(item => {
+  const product = PRODUCTS[item.id];
+  if (!product) return;
+  const price = Number(product.price);   // ✅ ensure number
+  const qty   = Number(item.qty);         // ✅ ensure number
+  const subTotal = price * qty;
+
+  const subtotal = product.price * item.qty;
+  total += subtotal;
+
+  const div = document.createElement("div");
+  div.style.borderBottom = "1px solid #ddd";
+  div.style.padding = "20px 0";
+
+  div.innerHTML = `
+    <h3>${product.name}</h3>
+    <p>₹${product.price} × ${item.qty} = ₹${subtotal}</p>
+    <button onclick="removeFromCart('${item.id}');location.reload()">Remove</button>
+  `;
+
+  cartItemsDiv.appendChild(div);
+});
+
+document.getElementById("cartTotal").innerText =
+  cart.length ? `Total: ₹${total}` : "Your cart is empty";
+
+function checkout(){
+  alert("Checkout coming next");
+}
+</script>
+
+<script src="js/nav.js"></script>
+
+</body>
+</html>

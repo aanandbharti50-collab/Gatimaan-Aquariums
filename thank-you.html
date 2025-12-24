@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Thank You for Your Order</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div style="
+  max-width:600px;
+  margin:120px auto;
+  text-align:center;
+  padding:20px
+">
+
+  <h1>Thank You! 🎉</h1>
+
+  <p style="font-size:16px;margin-top:20px">
+    Your order has been successfully received.
+  </p>
+
+  <p style="color:#6e6e73;margin:15px 0">
+    Our team will review your order and contact you shortly on WhatsApp or phone.
+  </p>
+
+<div style="margin-top:40px">
+    <a href="orders.html" class="btn primary">
+      View My Orders
+    </a>
+  </div>
+
+  <div style="margin-top:40px">
+    <a href="shop.html" class="btn primary">
+      Continue Shopping
+    </a>
+  </div>
+<h1>🎉 Thank You for Your Order</h1>
+<p>Your order has been successfully placed.</p>
+
+<div id="orderSummary" style="max-width:700px;margin:auto"></div>
+
+<a href="shop.html" class="btn">Continue Shopping</a>
+
+
+
+</div>
+<script src="js/cart.js"></script> 
+<script src="js/nav.js"></script>
+<script>
+const summaryEl = document.getElementById("orderSummary");
+const orderData = JSON.parse(sessionStorage.getItem("orderSummary"));
+
+if (!orderData) {
+  summaryEl.innerHTML = "<p>No order details found.</p>";
+} else {
+  let html = `<h3>Order ID: ${orderData.orderId}</h3><hr>`;
+
+  orderData.items.forEach(item => {
+    html += `
+      <p>
+        ${item.name} × ${item.qty}
+        — ₹${item.price * item.qty}
+      </p>
+    `;
+  });
+
+  html += `<hr><h3>Total: ₹${orderData.total}</h3>`;
+
+  summaryEl.innerHTML = html;
+
+  // Final cleanup
+  sessionStorage.removeItem("orderSummary");
+  // Finalize order
+  localStorage.removeItem("cart");
+}
+</script>
+
+</body>
+</html>

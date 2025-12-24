@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Order Placed</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div style="max-width:600px;margin:100px auto;text-align:center">
+
+ <h1>Order Prepared</h1>
+
+  <p>Your Order ID:</p>
+  <p id="orderIdText" style="font-size:18px;font-weight:bold"></p>
+
+  <p>
+    Please send your order details on WhatsApp using the button below.
+  </p>
+
+<button class="btn primary" onclick="sendWhatsApp()">
+  1. Send / Resend Order on WhatsApp
+</button>
+
+<br><br>
+
+<button class="btn" onclick="confirmSent()">
+  2. I have sent the order
+</button>
+
+</div>
+
+
+<script>
+const pending = JSON.parse(sessionStorage.getItem("orderSummary"));
+
+if (!pending) {
+  document.body.innerHTML =
+    "<h2 style='text-align:center;margin-top:100px'>No pending order found</h2>";
+} else {
+  document.getElementById("orderIdText").innerText = pending.orderId;
+}
+
+function sendWhatsApp() {
+  if (!pending) return;
+
+  let msg = `Hi Gatimaan Aquariums 👋\n\n`;
+  msg += `Order ID: ${pending.orderId}\n\n`;
+
+  pending.items.forEach(item => {
+    msg += `• ${item.name} × ${item.qty} = ₹${item.price * item.qty}\n`;
+  });
+
+  msg += `\nTotal: ₹${pending.total}\n\n`;
+  msg += `Please confirm my order.`;
+
+  const whatsappURL =
+    "https://wa.me/917004547105?text=" +
+    encodeURIComponent(msg);
+
+  window.open(whatsappURL, "_blank");
+}
+
+
+function confirmSent() {
+  if (!pending) return;
+
+const user = JSON.parse(localStorage.getItem("currentUser"));
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  orders.push({
+    orderId: pending.orderId,
+    message: pending.message,
+    email: user?.email || "",
+    phone: user?.phone || "",
+    date: new Date().toISOString()
+  });
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+  
+
+  // Redirect to thank-you page
+  window.location.href = "thank-you.html";
+}
+
+</script>
+<script src="js/cart.js"></script> 
+<script src="js/nav.js"></script>
+</body>
+</html>

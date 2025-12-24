@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gatimaan Aquariums</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<style>
+/* SHOP PAGE */
+.shop-wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+.shop-title{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.breadcrumbs{
+  font-size:13px;
+  color:#6e6e73;
+  margin-bottom:15px;
+}
+
+.breadcrumbs a{
+  text-decoration:none;
+  color:#6e6e73;
+}
+
+.breadcrumbs a:hover{
+  text-decoration:underline;
+}
+
+.breadcrumbs span{
+  margin:0 6px;
+}
+
+.category-bar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:30px;
+  justify-content:center;
+}
+.category-bar button{
+  padding:8px 14px;
+  border:1px solid #ccc;
+  background:#fff;
+  cursor:pointer;
+  border-radius:6px;
+}
+.category-bar button.active{
+  background:#0f3d2e;
+  color:#fff;
+  border-color:#0f3d2e;
+}
+
+.shop-layout{
+  display:grid;
+  grid-template-columns:250px 1fr;
+  gap:40px;
+}
+
+/* FILTER */
+.filter h4{margin-bottom:10px}
+.filter input{width:100%}
+
+/* PRODUCTS */
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:30px;
+}
+
+.product-card{
+  text-decoration:none;
+  color:inherit;
+}
+.product-img{
+  background:#b7dfe8;
+  aspect-ratio:1/1;
+  border-radius:10px;
+  overflow:hidden;
+}
+.product-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.product-card h3{
+  font-size:14px;
+  margin:10px 0 4px;
+}
+.price del{color:#999;font-size:13px}
+.price span{font-weight:600}
+
+.badge{
+  position:absolute;
+  background:#0f3d2e;
+  color:#fff;
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:6px;
+  top:10px;
+  left:10px;
+}
+.img-wrap{position:relative}
+</style>
+
+
+<section class="shop-wrap">
+
+  <div class="shop-title">
+    <h1 id="categoryTitle">All Products</h1>
+    <p id="categoryDesc">Browse our complete range of aquariums, plants, and aquascaping products
+</p>
+    <p id="productCount" style="color:#6e6e73;font-size:14px;">
+    Showing all products
+  </p>
+
+  </div>
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="index.html">Home</a>
+  <span>›</span>
+  <a href="shop.html">Shop</a>
+  <span id="breadcrumbCategoryWrap" style="display:none;">
+    <span>›</span>
+    <span id="breadcrumbCategory"></span>
+  </span>
+</nav>
+
+
+  <!-- CATEGORY BUTTONS -->
+ <div class="category-bar">
+  <div style="text-align:right;margin-bottom:20px;">
+  <label for="sortSelect" style="font-size:14px;color:#6e6e73;">Sort by:</label>
+  <select id="sortSelect" onchange="sortProducts(this.value)">
+    <option value="">Default</option>
+    <option value="price-asc">Price: Low to High</option>
+    <option value="price-desc">Price: High to Low</option>
+    <option value="name-asc">Name: A to Z</option>
+  </select>
+</div>
+  <button class="active" onclick="filterCategory('all', this)">All Products</button>
+  <button onclick="filterCategory('aquarium', this)">Aquarium Tanks</button>
+  <button onclick="filterCategory('co2', this)">CO2 System & Accessories</button>
+  <button onclick="filterCategory('filtration', this)">Filtration</button>
+  <button onclick="filterCategory('hardscape', this)">Hardscape</button>
+  <button onclick="filterCategory('hardwood', this)">Hardwood</button>
+  <button onclick="filterCategory('plants', this)">Live Aquatic Plants</button>
+</div>
+
+
+  <div class="shop-layout">
+
+    <!-- FILTER -->
+    <aside class="filter">
+      <h4>Filter by</h4>
+      <label>Price</label>
+      <input
+  type="range"
+  id="priceRange"
+  min="500"
+  max="200000"
+  value="200000"
+  oninput="applyFilters()">
+
+<p id="priceLabel">Up to ₹200000</p>
+
+    </aside>
+
+    <!-- PRODUCTS GRID -->
+    <div class="products" id="productGrid"></div>
+</div>
+
+</section>
+
+
+<footer>
+© Gatimaan Aquariums
+</footer>
+
+
+<!-- ✅ CATEGORY FILTER SCRIPT -->
+<script>
+const categoryDescriptions = {
+  all: "Browse our complete range of aquariums, plants, and aquascaping products.",
+  aquarium: "Premium aquarium tanks designed for durability and aesthetics.",
+  co2: "CO2 systems and accessories for healthy planted aquariums.",
+  filtration: "Reliable filtration solutions for crystal-clear water.",
+  hardscape: "Natural hardscape materials to create stunning aquascapes.",
+  hardwood: "Carefully selected aged hardwood for aquascaping.",
+  plants: "Live aquatic plants grown for aquarium environments."
+};
+
+function filterCategory(category, btn){
+  const title = document.getElementById("categoryTitle");
+  const desc = document.getElementById("categoryDesc");
+  const countEl = document.getElementById("productCount");
+  const products = document.querySelectorAll(".product-card");
+  const buttons = document.querySelectorAll(".category-bar button");
+
+  title.innerText = btn.innerText;
+  desc.innerText = categoryDescriptions[category] || "";
+
+  buttons.forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+ 
+ // ✅ UPDATE URL (NO RELOAD)
+  history.replaceState(null, "", "?category=" + category);
+
+const bcWrap = document.getElementById("breadcrumbCategoryWrap");
+const bcText = document.getElementById("breadcrumbCategory");
+
+if(category === "all"){
+  bcWrap.style.display = "none";
+} else {
+  bcText.innerText = btn.innerText;
+  bcWrap.style.display = "inline";
+}
+
+  let visibleCount = 0;
+
+  products.forEach(p => {
+    const cats = p.dataset.category.split(" ");
+    const show = category === "all" || cats.includes(category);
+    p.style.display = show ? "block" : "none";
+    if(show) visibleCount++;
+  });
+
+  countEl.innerText =
+    category === "all"
+      ? `Showing all ${visibleCount} products`
+      : `Showing ${visibleCount} products`;
+}
+
+function sortProducts(type){
+  const container = document.querySelector(".products");
+  const items = Array.from(container.querySelectorAll(".product-card"));
+
+  let sorted;
+
+  if(type === "price-asc"){
+    sorted = items.sort((a,b) =>
+      Number(a.dataset.price) - Number(b.dataset.price)
+    );
+  }
+  else if(type === "price-desc"){
+    sorted = items.sort((a,b) =>
+      Number(b.dataset.price) - Number(a.dataset.price)
+    );
+  }
+  else if(type === "name-asc"){
+    sorted = items.sort((a,b) =>
+      a.dataset.name.localeCompare(b.dataset.name)
+    );
+  }
+  else{
+    return; // default, do nothing
+  }
+
+  // Re-append in sorted order
+  sorted.forEach(item => container.appendChild(item));
+}
+
+// ✅ LOAD CATEGORY FROM URL ON PAGE LOAD
+window.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const category = params.get("category");
+
+  if(category){
+    const buttons = document.querySelectorAll(".category-bar button");
+
+    buttons.forEach(btn => {
+      if(btn.getAttribute("onclick")?.includes(`'${category}'`)){
+        filterCategory(category, btn);
+      }
+    });
+  }
+});
+
+</script>
+
+<script src="js/products.js"></script>
+<script src="js/shop.js"></script>
+<script src="js/cart.js"></script> 
+<script src="js/nav.js"></script>
+
+</body>
+</html>

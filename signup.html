@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sign Up</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div style="max-width:400px;margin:120px auto;text-align:center">
+  <h2>Create Account</h2>
+
+  <input id="email" placeholder="Email (optional)"
+    style="width:100%;padding:10px;margin:10px 0">
+
+  <input id="phone" placeholder="Phone (optional)"
+    style="width:100%;padding:10px;margin:10px 0">
+
+  <input id="password" type="password" placeholder="Password"
+    style="width:100%;padding:10px;margin:10px 0">
+
+  <button class="btn primary" onclick="handleSignup()">Sign Up</button>
+
+  <p style="margin-top:15px">
+    Already have an account?
+    <a href="login.html">Login</a>
+  </p>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+function handleSignup() {
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!password) {
+    alert("Password required");
+    return;
+  }
+
+  const success = signup({ email, phone, password });
+  if (success) {
+    window.location.href = "orders.html";
+  }
+}
+</script>
+<script src="js/nav.js"></script>
+</body>
+</html>

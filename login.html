@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div style="max-width:400px;margin:120px auto;text-align:center">
+  <h2>Login</h2>
+
+  <input id="identifier"
+    placeholder="Email or Phone"
+    style="width:100%;padding:10px;margin:10px 0">
+
+  <input id="password"
+    type="password"
+    placeholder="Password"
+    style="width:100%;padding:10px;margin:10px 0">
+
+  <button class="btn primary" onclick="handleLogin()">Login</button>
+
+  <p style="margin-top:15px">
+    New here?
+    <a href="signup.html">Create account</a>
+  </p>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+function handleLogin() {
+  const identifier = document.getElementById("identifier").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!identifier || !password) {
+    alert("All fields required");
+    return;
+  }
+
+  const success = login({ identifier, password });
+  if (success) {
+    window.location.href = "orders.html";
+  }
+}
+</script>
+<script src="js/nav.js"></script>
+</body>
+</html>
